@@ -1,236 +1,124 @@
-const productosApi = {
-    get: () => {
-        return fetch('/api/products')
-            .then(data => data.json())
-    }
-}
-
-const carritosApi = {
-    crearCarrito: () => {
-        const options = { method: "POST" }
-        return fetch('/api/carts', options)
-            .then(data => data.json())
-    },
-    deleteCart: (idCarrito) =>{
-        const options = {
-            method: 'DELETE',
-        }
-        return fetch(`/api/carts/${idCarrito}`, options)
-    },
-    getIds: () => {
-        return fetch('/api/carts')
-            .then(data => data.json())
-    },
-    postProd: (idCarrito, idProd) => {
-        const data = { id: idProd }
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        }
-        return fetch(`/api/carts/${idCarrito}/products`, options)
-    },
-    getProds: async idCarrito => {
-        const prodsInCart = await fetch(`/api/carts/${idCarrito}/products`).then(data => data.json())
-        const _prodsInCart = Promise.all(prodsInCart.map((prod)=>{
-            return fetch(`/api/products/${prod.id}`).then(data => data.json())
-        }))
-        const finalProds = _prodsInCart.then(data => data)
-        return finalProds
-    },
-    deleteProd: (idCarrito, idProducto) => {
-        const options = {
-            method: 'DELETE',
-        }
-        return fetch(`/api/carts/${idCarrito}/products/${idProducto}`, options)
-    }
-}
-
-const ordersApi = {
-    get: () => {
-        return fetch('/api/orders')
-            .then(data => data.json())
-    },
-    createOrder: async (idCart) => {
-        const cartData = await carritosApi.getIds().then(carts => {
-            const cart = carts.filter(cart => cart.id===parseInt(idCart))[0]
-            return cart
-        })
-        
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(cartData)
-        }
-        return fetch('/api/orders', options)
-            .then(data => data.json())
-    }
-}
-
-loadComboProductos()
-loadComboCarrito()
-
-document.getElementById('btnAgregarAlCarrito').addEventListener('click', () => {
-    const idCarrito = document.getElementById('comboCarritos').value
-    const idProd = document.getElementById('comboProductos').value
-    if (idCarrito && idProd) {
-        agregarAlCarrito(idCarrito, idProd)
+import  daoCarritoMongo  from "../../daos/daoCarritoMongo.js";
+import { User } from "../../managers/user.js";
+import { transporter } from "../../helpers/transport.js";
+import log4js from "log4js";
+const logger = log4js.getLogger();
+const createCart = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    //Chequeamos que el user exista:
+    const user = await User.findOne({ _id: uid });
+    if (!user) return res.json({ status: 404, msg: "Usuario no existe" });
+    //Chequeamos que el usuario no tenga un carrito:
+    const carrito = await daoCarritoMongo.getByUser(uid);
+    //Si no existe lo creamos y le agregamos el producto:
+    if (!carrito) {
+      await daoCarritoMongo.save({ user: uid, products: [] });
     } else {
-        alert('debe seleccionar un carrito y un producto')
+      return res.json({ status: 400, msg: "El usuario ya tiene un carrito" });
     }
-})
 
-document.getElementById('btnCrearCarrito').addEventListener('click', () => {
-    carritosApi.crearCarrito()
-        .then(({ id }) => {
-            loadComboCarrito().then(() => {
-                const combo = document.getElementById('comboCarritos')
-                combo.value = `${id}`
-                combo.dispatchEvent(new Event('change'));
-            })
-        })
-})
+    return res.json({ msg: "carrito creado con éxito." });
+  } catch (error) {
+    logger.warn(e.message);
+    return res.json({ status: 500, msg: error.message });
+  }
+};
 
-document.getElementById('comboCarritos').addEventListener('change', () => {
-    const idCarrito = document.getElementById('comboCarritos').value
-    actualizarListaCarrito(idCarrito)
-})
+const getAllCarritos = async (req, res) => {
+  try {
+    const cartList = await daoCarritoMongo.getAll();
+    return res.json(cartList);
+  } catch (e) {
+    logger.warn(e.message);
+    return res.json({ error: e.message });
+  }
+};
 
-document.getElementById('btnNewOrder').addEventListener('click', () => {
-    const idCarrito = document.getElementById('comboCarritos').value
-    ordersApi.createOrder(idCarrito)
-    .then((data) => {
-        if(data.state=='success'){
-            carritosApi.deleteCart(idCarrito)
-            .then(async (data) => {
-                const resp = await data.json()
-                if(resp.deleted){
-                    loadComboCarrito()
-                    makeHtmlTable([]).then(html => {
-                        document.getElementById('carrito').innerHTML = html
-                    })
-                    alert('Se genero correctamente su pedido!')
-                }
-            })
-        }
-    })
-})
+const deleteCart = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await daoCarritoMongo.deleteById(id);
+    return res.json({ msg: "Carrito eliminado con éxito." });
+  } catch (error) {
+    logger.warn(e.message);
+    return res.json({ status: 500, msg: error.message });
+  }
+};
 
-
-function agregarAlCarrito(idCarrito, idProducto) {
-    return carritosApi.postProd(idCarrito, idProducto).then(() => {
-        actualizarListaCarrito(idCarrito)
-    })
-}
-
-function quitarDelCarrito(idProducto) {
-    const idCarrito = document.getElementById('comboCarritos').value
-    return carritosApi.deleteProd(idCarrito, idProducto).then(() => {
-        actualizarListaCarrito(idCarrito)
-    })
-}
-
-async function actualizarListaCarrito(idCarrito) {
-    return await carritosApi.getProds(idCarrito)
-        .then(prods => makeHtmlTable(prods))
-        .then(html => {
-            document.getElementById('carrito').innerHTML = html
-        })
-}
-
-document.getElementById('btnDeleteCarrito').addEventListener('click', () => {
-    const idCarrito = document.getElementById('comboCarritos').value
-    carritosApi.deleteCart(idCarrito)
-    .then(() => {
-        loadComboCarrito()
-        makeHtmlTable([]).then(html => {
-            document.getElementById('carrito').innerHTML = html
-        })
-    })
-})
-
-function makeHtmlTable(productos) {
-    let html = `
-        <style>
-            .table td,
-            .table th {
-                vertical-align: middle;
-            }
-        </style>`
-
-    if (productos.length > 0) {
-        html += `
-        <h2>Lista de Productos</h2>
-        <div class="table-responsive">
-            <table class="table table-dark">
-                <tr>
-                    <th>Nombre</th>
-                    <th>Precio</th>
-                    <th>Foto</th>
-                </tr>`
-        for (const prod of productos) {
-            html += `
-                    <tr>
-                    <td>${prod.nombre}</td>
-                    <td>$${prod.precio}</td>
-                    <td><img width="50" src=${prod.foto} alt="not found"></td>
-                    <td><a type="button" onclick="quitarDelCarrito('${prod.id}')">borrar</a></td>
-                    </tr>`
-        }
-        html += `
-            </table>
-        </div >`
+const addProductCart = async (req, res) => {
+  try {
+    const { uid, product } = req.params;
+    //Chequeamos que el user exista:
+    const user = await User.findOne({ _id: uid });
+    if (!user) return res.json({ status: 404, msg: "Usuario no existe" });
+    //Chequeamos que el usuario no tenga un carrito:
+    const carrito = await daoCarritoMongo.getByUser(uid);
+    //Si no existe lo creamos y le agregamos el producto:
+    if (!carrito) {
+      await daoCarritoMongo.save({ user: uid, products: [product] });
     } else {
-        html += `<br><h4>carrito sin productos</h2>`
+      //Si ya existe le agregamos solo el producto:
+      carrito.products.push(product);
+      await carrito.save();
     }
-    return Promise.resolve(html)
-}
 
-function crearOpcionInicial(leyenda) {
-    const defaultItem = document.createElement("option")
-    defaultItem.value = ''
-    defaultItem.text = leyenda
-    defaultItem.hidden = true
-    defaultItem.disabled = true
-    defaultItem.selected = true
-    return defaultItem
-}
+    return res.json({ msg: "Producto agregado con éxito" });
+  } catch (e) {
+    logger.warn(e.message);
+  }
+};
 
-function loadComboProductos() {
-    return productosApi.get()
-        .then(productos => {
-            const combo = document.getElementById('comboProductos');
-            combo.appendChild(crearOpcionInicial('elija un producto'))
-            for (const prod of productos) {
-                const comboItem = document.createElement("option");
-                comboItem.value = prod.id;
-                comboItem.text = prod.nombre;
-                combo.appendChild(comboItem);
-            }
-        })
-}
+const getProductCart = async (req, res) => {
+  const uid = req.user._id;
+  try {
+    const cart = await daoCarritoMongo.getProductCart(uid);
+    return res.render("carrito", { carrito: cart.products, uid: uid });
+  } catch (e) {
+    logger.warn(e.message);
+  }
+};
 
-function vaciarCombo(combo) {
-    while (combo.childElementCount > 0) {
-        combo.remove(0)
-    }
-}
+const deleteProductCart = async (req, res) => {
+  const { uid, product } = req.params;
+  try {
+    const cart = await daoCarritoMongo.deleteProductCart(uid, product);
+    return res.json({ status: 200, msg: "OK", data: cart });
+  } catch (e) {
+    logger.warn(e.message);
+  }
+};
 
-function loadComboCarrito() {
-    return carritosApi.getIds()
-        .then(carts => {
-            const combo = document.getElementById('comboCarritos');
-            vaciarCombo(combo)
-            combo.appendChild(crearOpcionInicial('elija un carrito'))
-            for (const cart of carts) {
-                const comboItem = document.createElement("option");
-                comboItem.value = cart.id;
-                comboItem.text = cart.id;
-                combo.appendChild(comboItem);
-            }
-        })
-}
+const buyProduct = async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const user = await User.findOne({ _id: uid });
+    const cart = await daoCarritoMongo.getProductCart(uid);
+    if (cart.products.length === 0)
+      return res.render("carrito", { msg: "No hay productos en tu carrito" });
+    //MAIL AL ADMINISTRADOR:
+    const mailOptions = {
+      from: "Server <noreply@node.com>",
+      to: `${process.env.EMAIL}`,
+      subject: `Nueva order de compra de ${user.username} ${user.lastname}`,
+      text: `${cart.products}`,
+    };
+
+    transporter.sendMail(mailOptions);
+
+    return res.redirect("/exito");
+  } catch (e) {
+    logger.warn(e.message);
+    return res.json({ status: 500, msg: e.message });
+  }
+};
+
+export {
+  createCart,
+  deleteCart,
+  getProductCart,
+  addProductCart,
+  deleteProductCart,
+  getAllCarritos,
+  buyProduct,
+};

@@ -9,6 +9,9 @@ import { dirname } from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+import routerCart from "./routes/carrito.js";
+
+
 import { User } from "./managers/user.js";
 import passport from "passport";
 import bCrypt from "bcrypt";
@@ -60,6 +63,7 @@ app.use(
   })
 );
 app.use("/", apiProducts);
+app.use("/carrito", routerCart);
 
 app.use(function (err, req, res, next) {
   console.error(err);
@@ -150,6 +154,7 @@ passport.use(
       passReqToCallback: true,
     },
     function (req, username, password, cb) {
+      console.log(req.body);
       const findOrCreateUser = function () {
         User.findOne({ username: username }, function (err, user) {
           if (err) {
@@ -165,7 +170,11 @@ passport.use(
               return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
             };
             newUser.username = username;
+            newUser.lastname = req.body.lastname;
+            newUser.email = req.body.email;
             newUser.password = createHash(password);
+            newUser.direccion = req.body.direccion;
+            newUser.avatar = req.body.avatar;
             newUser.save((err) => {
               if (err) {
                 console.log("Error in Saving user: " + err);
@@ -253,22 +262,22 @@ app.get("/", (req, res) => {
   }
 });
 
+app.get("/datos", async (req, res) => {
+  console.log(req.user);
+  if (req.user) {
+    const datosUsuario = await User.findById(req.user._id).lean();
+    res.render("datos", datosUsuario);
+  } else {
+    res.redirect("/login");
+  }
+});
+
 app.get("*", (req, res) => {
   loggerTodos.warn(`metodo ${req.method} Ruta inexistente ${req.originalUrl}`);
   const html = `<div> direccion no valida </div>`;
   res.status(404).send(html);
 });
 
-app.get("/datos", async (req, res) => {
-  if (req.user) {
-    const datosUsuario = await User.findById(req.user._id).lean();
-    res.render("datos", {
-      datos: datosUsuario,
-    });
-  } else {
-    res.redirect("/login");
-  }
-});
 /*============================[logs]============================*/
 log4js.configure({
   appenders: {
@@ -287,8 +296,8 @@ log4js.configure({
 //=========== SOCKET ===========//
 
 io.on("connection", async (socket) => {
-  console.log("User connected");
-
+  /*console.log("User connected");
+   */
   const arrayProduct = await products.getAll();
   socket.emit("products", arrayProduct);
   socket.on("new-product", async (data, cb) => {
@@ -298,7 +307,7 @@ io.on("connection", async (socket) => {
     io.sockets.emit("products", arrayProduct);
   });
 
-  const messages = await chat.getMessages();
+  /*const messages = await chat.getMessages();
   let pesoOriginal = JSON.stringify(messages).length;
   console.log(`El tamaño original del archivo era de: `, pesoOriginal);
 
@@ -329,7 +338,7 @@ io.on("connection", async (socket) => {
     const messages = await chat.getMessages();
 
     io.sockets.emit("messages-servidor", normalizedMessages);
-  });
+  });*/
 });
 
 //=========== PASSPORT ===========//

@@ -74,3 +74,45 @@
 [2022-11-25T17:46:54.580] [WARN] todos - metodo GET Ruta inexistente /favicon.ico
 [2022-11-25T17:46:59.598] [INFO] todos - metodo GET Ruta  /
 [2022-11-25T17:53:53.112] [INFO] todos - metodo GET Ruta  /
+[2022-11-28T17:03:02.669] [INFO] todos - metodo GET Ruta  /
+[2022-11-28T17:03:02.860] [WARN] todos - metodo GET Ruta inexistente /favicon.ico
+[2022-11-28T17:03:11.131] [INFO] todos - metodo GET Ruta  /
+[2022-11-28T17:03:17.428] [INFO] todos - metodo GET Ruta  /
+[2022-11-28T17:03:34.728] [INFO] todos - metodo GET Ruta  /
+[2022-11-28T17:03:50.807] [WARN] todos - metodo GET Ruta inexistente /css/estilos.css
+[2022-11-28T17:03:53.060] [INFO] todos - metodo GET Ruta  /
+[2022-11-28T17:38:18.471] [INFO] todos - metodo GET Ruta  /
+[2022-11-28T17:38:23.679] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T13:58:08.257] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T13:58:08.555] [WARN] todos - metodo GET Ruta inexistente /favicon.ico
+[2022-11-29T13:58:12.422] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T14:09:29.931] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T14:11:52.175] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T14:21:19.894] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T14:21:24.179] [WARN] todos - metodo GET Ruta inexistente /css/estilos.css
+[2022-11-29T14:21:26.436] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T14:33:20.326] [ERROR] archivo2 - metodo GET Ruta  /failregister
+[2022-11-29T14:33:30.588] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T14:34:43.230] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T14:37:50.991] [WARN] todos - metodo GET Ruta inexistente /css/estilos.css
+[2022-11-29T14:37:53.288] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T14:39:54.123] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T14:40:14.394] [WARN] todos - metodo GET Ruta inexistente /datos
+[2022-11-29T14:41:50.157] [WARN] todos - metodo GET Ruta inexistente /datos
+[2022-11-29T14:43:40.342] [WARN] todos - metodo GET Ruta inexistente /datos
+[2022-11-29T14:56:28.467] [WARN] todos - metodo GET Ruta inexistente /datos
+[2022-11-29T14:58:58.155] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T14:59:05.692] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T14:59:16.260] [WARN] todos - metodo GET Ruta inexistente /login/datos
+[2022-11-29T14:59:28.618] [WARN] todos - metodo GET Ruta inexistente /datos
+[2022-11-29T15:00:28.632] [WARN] todos - metodo GET Ruta inexistente /datos
+[2022-11-29T15:00:36.878] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T15:01:14.504] [WARN] todos - metodo GET Ruta inexistente /dato
+[2022-11-29T15:02:17.277] [WARN] todos - metodo GET Ruta inexistente /datos
+[2022-11-29T15:21:07.581] [WARN] todos - metodo GET Ruta inexistente /carrito/
+[2022-11-29T15:21:51.108] [WARN] todos - metodo GET Ruta inexistente /user/logout
+[2022-11-29T15:24:44.869] [WARN] todos - metodo GET Ruta inexistente /css/estilos.css
+[2022-11-29T15:24:47.129] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T15:26:48.273] [WARN] todos - metodo GET Ruta inexistente /ddd
+[2022-11-29T15:31:57.626] [WARN] todos - metodo GET Ruta inexistente /ddd
+[2022-11-29T15:32:04.712] [WARN] todos - metodo GET Ruta inexistente /carrito/

@@ -12,10 +12,10 @@ const router = express.Router();
 //=========== MIDDLEWARE ===========//
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
-router.use((req, res, next) => {
+/*router.use((req, res, next) => {
   console.log(`Product Middleware, Time: ${Date.now()}`);
   next();
-});
+});*/
 
 //=========== CONTENEDOR ===========//
 let products = new Contenedor("./files/productos.txt");
