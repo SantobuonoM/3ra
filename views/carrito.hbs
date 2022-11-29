@@ -1,4 +1,4 @@
-{{!-- <!DOCTYPE html>
+{{! <!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -10,38 +10,25 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
-<body> --}}
+<body> }}
 
-    <div class="container mt-3">
-        <h1 class="alert alert-info">
-            <button class="btn btn-info" onclick="location.href='/'">Inicio</button>
-            <button class="btn btn-info" onclick="location.href='/productos'">Productos</button>
-        </h1>
-        <div class="jumbotron">
-            <h1>Agregar Producto al Carrito</h1>
-            <br>
-            <select id="comboCarritos" name="comboCarritos">
-                {{#if carts.length}}
-                    {{#each carts}}
-                        <option value="{{this.id}}">{{this.id}}</option>
-                    {{/each}}
-                {{/if}}
-            </select>
-            <br>
-            <select id="comboProductos" name="comboProductos"></select>
-            <br>
-            <button id="btnAgregarAlCarrito">Agregar</button>
-            <br>
-            <div id="carrito"></div>
-            <br>
-            <button id="btnCrearCarrito">Crear Carrito</button>
-            <button id="btnDeleteCarrito">Eliminar Carrito</button>
-            <button id="btnNewOrder">Generar pedido</button>
-        </div>
-    </div>
+<div class="container mt-3">
+  <h1 class="alert alert-info">
+    <button class="btn btn-info" onclick="location.href='/'">Inicio</button>
 
-    <script src="js/carrito.js"></script>
+  </h1>
+  <div class="jumbotron">
+    <h1 style="color:blue;" class="my-5 fw-bolder">Agregar Producto al Carrito</h1>
+    <br />
+    {{>formNewProduct}}
+    <br />
+    <button class="btn btn-success mt-3 mb-5" id="btnCrearCarrito">Crear Carrito</button>
+    <button class="btn btn-success mt-3 mb-5" id="btnDeleteCarrito">Eliminar
+      Carrito</button>
+    <button class="btn btn-success mt-3 mb-5" id="btnNewOrder">Generar pedido</button>
+  </div>
+</div>
 
-{{!-- </body>
+{{! </body>
 
-</html> --}}
+</html> }}

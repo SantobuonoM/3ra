@@ -1,4 +1,4 @@
-import  daoCarritoMongo  from "../../daos/daoCarritoMongo.js";
+import daoCarritoMongo from "../../daos/daoCarritoMongo.js";
 import { User } from "../../managers/user.js";
 import { transporter } from "../../helpers/transport.js";
 import log4js from "log4js";
@@ -70,9 +70,11 @@ const addProductCart = async (req, res) => {
 };
 
 const getProductCart = async (req, res) => {
-  const uid = req.user._id;
+  console.log(req.sessionID);
+  const uid = await User.findById(req.user._id).lean();
+
   try {
-    const cart = await daoCarritoMongo.getProductCart(uid);
+    const cart = await daoCarritoMongo.getProductCart(datosUsuario);
     return res.render("carrito", { carrito: cart.products, uid: uid });
   } catch (e) {
     logger.warn(e.message);

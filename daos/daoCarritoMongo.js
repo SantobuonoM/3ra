@@ -7,7 +7,7 @@ class daoCarritoMongo extends ContenedorMongoDb {
   }
   async getProductCart(uid) {
     try {
-      const carrito = await Carrito.findOne({ user: uid })
+      const carrito = await Carrito.get({ user: uid })
         .populate("products")
         .lean();
       if (!carrito) throw new Error("Carrito no encontrado");
@@ -18,7 +18,7 @@ class daoCarritoMongo extends ContenedorMongoDb {
   }
   async deleteProductCart(uid, product) {
     try {
-      const carrito = await Carrito.findOne({ user: uid }).populate("products");
+      const carrito = await Carrito.et({ user: uid }).populate("products");
       if (!carrito) throw new Error("Carrito no encontrado");
       const newCarrito = carrito.products.filter(
         (p) => p._id.toString() !== product.toString()

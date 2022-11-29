@@ -247,8 +247,16 @@ app.get("/logout", (req, res, next) => {
 
 app.get("/login", (req, res) => {
   if (req.isAuthenticated()) {
-    const { username } = req.user;
-    res.render("main", { username });
+    const { username } = req.user.username;
+    res.render("main",  username );
+  } else {
+    res.render("login");
+  }
+});
+app.get("/carrito/", (req, res) => {
+  if (req.isAuthenticated()) {
+    
+    res.render("carrito");
   } else {
     res.render("login");
   }

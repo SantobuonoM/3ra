@@ -1,13 +1,27 @@
+<div class="jumbotron">
+<div class="container mt-3"> 
+
+
 {{#if username}}
 <div class="container-lg d-flex flex-column align-items-center">
   <img
     src="{{avatar}}"
     class="card-img-top mt-3"
     style="width:10rem;height:10rem;margin:auto;border-radius:50%;object-fit:cover"
-  />
+  /><div class="container">
   <h1> Nombre: {{username}} {{lastname}}</h1>
+  <!-- Content here -->
+</div>
+<div class="container">
   <p>Direccion: {{direccion}}</p>
+  <!-- Content here -->
+</div>
+<div class="container">
   <p>Email: {{email}}</p>
+  <!-- Content here -->
+</div>
+
+  
   <a class="btn btn-dark text-center m-4" href="/logout">Desloguear</a>
   <a class="btn btn-success text-center m-4" href="/carrito/">Ver carrito</a>
 {{else}}
@@ -15,4 +29,6 @@
   <a class="btn btn-success text-center m-4" href="/login">Login</a>
 
 {{/if}}
+</div>
+</div>
 </div>

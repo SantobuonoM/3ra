@@ -18,7 +18,7 @@ routerCart.post("/:uid", createCart);
 routerCart.get("/lista", getAllCarritos);
 routerCart.delete("/:id", deleteCart);
 routerCart.put("/agregar/:uid/:product", addProductCart);
-routerCart.get("/", getProductCart);
+//routerCart.get("/", getProductCart);
 routerCart.delete("/eliminar/:uid/:product", deleteProductCart);
 routerCart.get("/comprar/:uid", buyProduct);
 export default routerCart;

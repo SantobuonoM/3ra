@@ -116,3 +116,23 @@
 [2022-11-29T15:26:48.273] [WARN] todos - metodo GET Ruta inexistente /ddd
 [2022-11-29T15:31:57.626] [WARN] todos - metodo GET Ruta inexistente /ddd
 [2022-11-29T15:32:04.712] [WARN] todos - metodo GET Ruta inexistente /carrito/
+[2022-11-29T17:38:10.249] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T17:38:54.980] [WARN] todos - metodo GET Ruta inexistente /css/estilos.css
+[2022-11-29T17:38:57.238] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T17:44:58.606] [WARN] todos - metodo GET Ruta inexistente /css/estilos.css
+[2022-11-29T17:45:00.808] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T17:45:09.464] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T17:45:13.350] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T17:45:19.166] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T17:45:25.127] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T17:45:30.042] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T17:46:12.948] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T17:58:47.632] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T17:58:51.974] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T18:20:51.234] [WARN] todos - metodo GET Ruta inexistente /lista
+[2022-11-29T18:35:06.436] [WARN] todos - metodo GET Ruta inexistente /carrito/6380d96a2c770e790cd23fb2
+[2022-11-29T18:49:57.722] [WARN] todos - metodo GET Ruta inexistente /carrito/js/function.js
+[2022-11-29T18:50:18.668] [WARN] todos - metodo GET Ruta inexistente /carrito/js/function.js
+[2022-11-29T18:50:18.747] [WARN] todos - metodo GET Ruta inexistente /carrito/js/function.js
+[2022-11-29T18:56:35.165] [INFO] todos - metodo GET Ruta  /
+[2022-11-29T18:56:38.028] [WARN] todos - metodo GET Ruta inexistente /productos
