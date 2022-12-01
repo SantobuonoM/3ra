@@ -9,8 +9,7 @@ import { dirname } from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-import routerCart from "./routes/carrito.js";
-
+import  {carts_router} from "./routes/carrito.js";
 
 import { User } from "./managers/user.js";
 import passport from "passport";
@@ -63,7 +62,7 @@ app.use(
   })
 );
 app.use("/", apiProducts);
-app.use("/carrito", routerCart);
+app.use("/carrito", carts_router);
 
 app.use(function (err, req, res, next) {
   console.error(err);
@@ -248,14 +247,13 @@ app.get("/logout", (req, res, next) => {
 app.get("/login", (req, res) => {
   if (req.isAuthenticated()) {
     const { username } = req.user.username;
-    res.render("main",  username );
+    res.render("main", username);
   } else {
     res.render("login");
   }
 });
 app.get("/carrito/", (req, res) => {
   if (req.isAuthenticated()) {
-    
     res.render("carrito");
   } else {
     res.render("login");

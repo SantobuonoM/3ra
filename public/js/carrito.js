@@ -1,126 +1,128 @@
+import mongoose from "mongoose";
+import config from "../../config.js";
 import daoCarritoMongo from "../../daos/daoCarritoMongo.js";
-import { User } from "../../managers/user.js";
-import { transporter } from "../../helpers/transport.js";
-import log4js from "log4js";
-const logger = log4js.getLogger();
-const createCart = async (req, res) => {
-  try {
-    const { uid } = req.params;
-    //Chequeamos que el user exista:
-    const user = await User.findOne({ _id: uid });
-    if (!user) return res.json({ status: 404, msg: "Usuario no existe" });
-    //Chequeamos que el usuario no tenga un carrito:
-    const carrito = await daoCarritoMongo.getByUser(uid);
-    //Si no existe lo creamos y le agregamos el producto:
-    if (!carrito) {
-      await daoCarritoMongo.save({ user: uid, products: [] });
-    } else {
-      return res.json({ status: 400, msg: "El usuario ya tiene un carrito" });
+
+mongoose.connect(config.mongodb.cnxStr, config.mongodb.options);
+
+export const Carts_controller_mongodb = class Carts_container {
+  constructor(collection, schema) {
+    this.collection = mongoose.model(collection, schema);
+  }
+
+  // Crea un carrito
+  create = async () => {
+    try {
+      let doc = await this.collection.save({ products: [] });
+      return doc._id;
+    } catch (err) {
+      return { error: "Carrito no guardado" };
     }
+  };
 
-    return res.json({ msg: "carrito creado con éxito." });
-  } catch (error) {
-    logger.warn(e.message);
-    return res.json({ status: 500, msg: error.message });
-  }
-};
-
-const getAllCarritos = async (req, res) => {
-  try {
-    const cartList = await daoCarritoMongo.getAll();
-    return res.json(cartList);
-  } catch (e) {
-    logger.warn(e.message);
-    return res.json({ error: e.message });
-  }
-};
-
-const deleteCart = async (req, res) => {
-  const { id } = req.params;
-  try {
-    await daoCarritoMongo.deleteById(id);
-    return res.json({ msg: "Carrito eliminado con éxito." });
-  } catch (error) {
-    logger.warn(e.message);
-    return res.json({ status: 500, msg: error.message });
-  }
-};
-
-const addProductCart = async (req, res) => {
-  try {
-    const { uid, product } = req.params;
-    //Chequeamos que el user exista:
-    const user = await User.findOne({ _id: uid });
-    if (!user) return res.json({ status: 404, msg: "Usuario no existe" });
-    //Chequeamos que el usuario no tenga un carrito:
-    const carrito = await daoCarritoMongo.getByUser(uid);
-    //Si no existe lo creamos y le agregamos el producto:
-    if (!carrito) {
-      await daoCarritoMongo.save({ user: uid, products: [product] });
-    } else {
-      //Si ya existe le agregamos solo el producto:
-      carrito.products.push(product);
-      await carrito.save();
+  // Trae todos los carritos
+  getAll = async () => {
+    try {
+      const carts = await this.collection.find({});
+      if (!carts) throw new Error("Carritos no encontrados");
+      return carts;
+    } catch (err) {
+      return { error: err };
     }
+  };
 
-    return res.json({ msg: "Producto agregado con éxito" });
-  } catch (e) {
-    logger.warn(e.message);
-  }
-};
+  // Trae un carrito por id
+  getById = async (cart_id) => {
+    try {
+      const cart = await this.collection.findById(cart_id);
+      if (!cart) throw new Error("Carrito no encontrado");
+      return cart;
+    } catch (err) {
+      return { error: err };
+    }
+  };
 
-const getProductCart = async (req, res) => {
-  console.log(req.sessionID);
-  const uid = await User.findById(req.user._id).lean();
+  getProducts = async (cart_id) => {
+    try {
+      const cart = await this.collection.findById(cart_id);
+      if (!cart) throw new Error("Carrito no encontrado");
+      return cart.products;
+    } catch (err) {
+      return { error: err };
+    }
+  };
 
-  try {
-    const cart = await daoCarritoMongo.getProductCart(datosUsuario);
-    return res.render("carrito", { carrito: cart.products, uid: uid });
-  } catch (e) {
-    logger.warn(e.message);
-  }
-};
+  addProduct = async (cart_id, product_id) => {
+    try {
+      const cart = await this.getById(cart_id);
+      console.log(cart.products);
 
-const deleteProductCart = async (req, res) => {
-  const { uid, product } = req.params;
-  try {
-    const cart = await daoCarritoMongo.deleteProductCart(uid, product);
-    return res.json({ status: 200, msg: "OK", data: cart });
-  } catch (e) {
-    logger.warn(e.message);
-  }
-};
+      if (!cart) throw new Error("Carrito no encontrado");
+      const product = await daoCarritoMongo.getById(product_id);
+      if (!product) throw new Error("Producto no encontrado");
 
-const buyProduct = async (req, res) => {
-  try {
-    const { uid } = req.params;
-    const user = await User.findOne({ _id: uid });
-    const cart = await daoCarritoMongo.getProductCart(uid);
-    if (cart.products.length === 0)
-      return res.render("carrito", { msg: "No hay productos en tu carrito" });
-    //MAIL AL ADMINISTRADOR:
-    const mailOptions = {
-      from: "Server <noreply@node.com>",
-      to: `${process.env.EMAIL}`,
-      subject: `Nueva order de compra de ${user.username} ${user.lastname}`,
-      text: `${cart.products}`,
-    };
+      const product_index = cart.products.findIndex(
+        (product) => product._id == product_id
+      );
+      console.log(product_index);
+      if (product_index === -1) {
+        delete product._doc.stock;
+        await cart.products.push({
+          ...product._doc,
+          quantity: 1,
+          id: product_id,
+        });
+        await cart.save();
+      } else {
+        console.log("ENTRÓ");
+        if (product.stock < cart.products[product_index].quantity + 1)
+          return { error: "Producto sin stock" };
 
-    transporter.sendMail(mailOptions);
+        console.log("PRODUCTO", cart.products[product_index]);
 
-    return res.redirect("/exito");
-  } catch (e) {
-    logger.warn(e.message);
-    return res.json({ status: 500, msg: e.message });
-  }
-};
+        await this.collection.findByIdAndUpdate(cart_id, {
+          $inc: { [`products.${product_index}.quantity`]: 1 },
+        });
+      }
 
-export {
-  createCart,
-  deleteCart,
-  getProductCart,
-  addProductCart,
-  deleteProductCart,
-  getAllCarritos,
-  buyProduct,
+      return true;
+    } catch (err) {
+      return { error: err };
+    }
+  };
+
+  //Delete product from cart
+  deleteProduct = async (cart_id, product_id) => {
+    try {
+      const cart = await this.getById(cart_id);
+      if (!cart) throw new Error("Carrito no encontrado");
+
+      const product_index = cart.products.findIndex(
+        (product) => product._id == product_id
+      );
+      if (product_index === -1) throw new Error("Producto no encontrado");
+
+      await this.collection.findByIdAndUpdate(
+        cart_id,
+        { $pull: { products: { id: product_id } } },
+        { safe: true, multi: true }
+      );
+      return true;
+    } catch (err) {
+      return { error: err };
+    }
+  };
+
+  clearProducts = async (cart_id) => {
+    try {
+      const cart = await this.getById(cart_id);
+      if (!cart) throw new Error("Carrito no encontrado");
+
+      await this.collection.findByIdAndUpdate(cart_id, {
+        $set: { products: [] },
+      });
+      return true;
+    } catch (err) {
+      return { error: err };
+    }
+  };
 };

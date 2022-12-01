@@ -5,126 +5,126 @@ mongoose.Promise = global.Promise;
 mongoose.connect(config.mongodb.cnxStr, config.mongodb.options);
 console.log("conectado a la db")
 class ContenedorMongoDb {
-  /** crea la tabla/collection a persistir */
-
-  constructor(collection, modelSchema) {
-    this.collection = collection;
-    this.model = mongoose.model(collection, modelSchema);
+  constructor(collection, schema) {
+    this.collection = mongoose.model(collection, schema);
   }
 
-  /** funcion getById */
-  async get(req, res) {
+  // Crea un carrito
+  create = async () => {
     try {
-      const prod = await this.model.findById(req.params.id);
-      console.log(this.collection + " encontrado ", prod);
-      return res.send(prod);
-    } catch (error) {
-      throw new Error(
-        `Error al buscar el  ${this.collection}, ${error.message}`
-      );
+      let doc = await this.collection.create({ products: [] });
+      return doc._id;
+    } catch (err) {
+      return { error: "Carrito no guardado" };
     }
-  }
+  };
 
-  /** funcion getAll */
-  async getAll() {
+  // Trae todos los carritos
+  getAll = async () => {
     try {
-      const prods = await this.model.find();
-      console.log("Producto encontrado", prods);
-      return prods;
-    } catch (error) {
-      throw new Error(
-        `Error al buscar los ${this.collection}, ${error.message}`
-      );
+      const carts = await this.collection.find({});
+      if (!carts) throw new Error("Carritos no encontrados");
+      return carts;
+    } catch (err) {
+      return { error: err };
     }
-  }
-  /** funcion post */
+  };
 
-  async save(req, res) {
+  // Trae un carrito por id
+  getById = async (cart_id) => {
     try {
-      const prod = await this.model.create(req.body);
-      console.log("Producto guardado", prod);
-      return prod;
-    } catch (error) {
-      throw new Error(
-        `Error al guardar el ${this.collection}, ${error.message}`
-      );
+      const cart = await this.collection.findById(cart_id);
+      if (!cart) throw new Error("Carrito no encontrado");
+      return cart;
+    } catch (err) {
+      return { error: err };
     }
-  }
+  };
 
-  //ad prod to cart
-  async addProductToCarrito(req, res) {
-    const idCarrito = req.params.id;
-    if (!idCarrito)
-      return res
-        .status(400)
-        .send({ message: "Ingresa el ID de un carrito listado" });
-    const { idProduct } = req.body;
-    const productSaved = await this.model.updateOne(
-      {
-        _id: idCarrito,
-      },
-      {
-        $push: { products: idProduct },
+  getProducts = async (cart_id) => {
+    try {
+      const cart = await this.collection.findById(cart_id);
+      if (!cart) throw new Error("Carrito no encontrado");
+      return cart.products;
+    } catch (err) {
+      return { error: err };
+    }
+  };
+
+  addProduct = async (cart_id, product_id) => {
+    try {
+      const cart = await this.getById(cart_id);
+      console.log(cart.products);
+
+      if (!cart) throw new Error("Carrito no encontrado");
+      const product = await ProductsDaoMongodb.getById(product_id);
+      if (!product) throw new Error("Producto no encontrado");
+
+      const product_index = cart.products.findIndex(
+        (product) => product._id == product_id
+      );
+      console.log(product_index);
+      if (product_index === -1) {
+        delete product._doc.stock;
+        await cart.products.push({
+          ...product._doc,
+          quantity: 1,
+          id: product_id,
+        });
+        await cart.save();
+      } else {
+        console.log("ENTRÓ");
+        if (product.stock < cart.products[product_index].quantity + 1)
+          return { error: "Producto sin stock" };
+
+        console.log("PRODUCTO", cart.products[product_index]);
+
+        await this.collection.findByIdAndUpdate(cart_id, {
+          $inc: { [`products.${product_index}.quantity`]: 1 },
+        });
       }
-    );
-    if (!productSaved) return res.status(404).send({ message: "Error" });
-    res.json({ message: productSaved });
-  }
 
-  //deleteProdFromCart
-  async deleteOneProduct(req, res) {
-    try {
-      const idCarrito = req.params.id;
-      const { id_prod } = req.params;
-
-      const productToDelete = await this.model.updateOne(
-        {
-          _id: idCarrito,
-        },
-        {
-          $pull: { products: id_prod },
-        }
-      );
-
-      return res.send("Producto eliminado!");
-    } catch (error) {
-      console.log(error);
+      return true;
+    } catch (err) {
+      return { error: err };
     }
-  }
+  };
 
-  /** funcion put */
-  async update(req, res) {
+  //Delete product from cart
+  deleteProduct = async (cart_id, product_id) => {
     try {
-      const upd = await this.model.updateOne(
-        {
-          _id: req.params.id,
-        },
-        {
-          $set: req.body,
-        }
+      const cart = await this.getById(cart_id);
+      if (!cart) throw new Error("Carrito no encontrado");
+
+      const product_index = cart.products.findIndex(
+        (product) => product._id == product_id
       );
-      console.log("Producto actualizado", upd);
-      return res.send(upd);
-    } catch (error) {
-      throw new Error(
-        `Error al actualizar el ${this.collection}, ${error.message}`
+      if (product_index === -1) throw new Error("Producto no encontrado");
+
+      await this.collection.findByIdAndUpdate(
+        cart_id,
+        { $pull: { products: { id: product_id } } },
+        { safe: true, multi: true }
       );
+      return true;
+    } catch (err) {
+      return { error: err };
     }
-  }
-  /** funcion delete */
+  };
 
-  async delete(req, res) {
-    return res.send(
-      await this.model.deleteOne({
-        _id: req.params.id,
-      })
-    );
-  }
-  /** funcion delete */
+  clearProducts = async (cart_id) => {
+    try {
+      const cart = await this.getById(cart_id);
+      if (!cart) throw new Error("Carrito no encontrado");
 
-  async borrarAll() {
-    return this.model.deleteMany({});
-  }
+      await this.collection.findByIdAndUpdate(cart_id, {
+        $set: { products: [] },
+      });
+      return true;
+    } catch (err) {
+      return { error: err };
+    }
+  };
 }
 
 module.exports = ContenedorMongoDb;

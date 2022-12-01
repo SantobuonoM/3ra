@@ -3,7 +3,7 @@ import express from "express";
 import ApiProductosMock from "../api/productosApi.js";
 import Contenedor from "../managers/contenedor.cjs";
 const ApiProductosMoc = new ApiProductosMock("./files/productos.txt");
-import { mensajesDao, productosDao } from "../daos/indexDao.cjs";
+import  DaoMongoDb  from "../daos/DaoMongoDb.cjs";
 import { fork } from "child_process";
 
 //=========== ROUTER ===========//
@@ -26,7 +26,7 @@ let products = new Contenedor("./files/productos.txt");
 
 router.get("/products", async (req, res, next) => {
   try {
-    const arrayProduct = await productosDao.getAll();
+    const arrayProduct = await DaoMongoDb.getAll();
     if (arrayProduct.length === 0) {
       throw new Error("No hay products");
     }
@@ -36,7 +36,7 @@ router.get("/products", async (req, res, next) => {
   }
 });
 
-router.get("/products-test", async (req, res, next) => {
+/*router.get("/products-test", async (req, res, next) => {
   try {
     const arrayProduct = ApiProductosMoc.products();
     if (arrayProduct.length === 0) {
@@ -46,12 +46,12 @@ router.get("/products-test", async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-});
+});*/
 
 router.get("/products/:id", async (req, res, next) => {
   try {
-    const producto = await mensajesDao
-      .getById(Number(req.params.id))
+    const producto = await productosDao
+      .get(Number(req.params._id))
       .then((resolve) => resolve);
     if (!producto) {
       throw new Error("Producto no encontrado");
@@ -104,7 +104,7 @@ router.post("/products", async (req, res, next) => {
     }
     console.log(req.body);
     await productosDao.save(req);
-    res.redirect("/products");
+    res.redirect("/carrito");
   } catch (err) {
       console.log(err);
   }

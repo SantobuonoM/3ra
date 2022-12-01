@@ -22,16 +22,15 @@ switch (config.MODO_PERSISTENCIA) {
     mensajesDao = new DaoFirebase();
     productosDao = new DaoFirebase();
     break;
-  case "mongodb":
-    const DaoMongoDb = require("./DaoMongoDb.cjs");
-    mensajesDao = new DaoMongoDb("mensajes", mongoSchema);
-    productosDao = new DaoMongoDb("productos", productoSchema);
-    break;
   default:
+    const DaoMongoDb = require("./DaoMongoDb.cjs");
+    productosDao = new DaoMongoDb("carrito", productoSchema);
+    break;
+  /* default:
     const DaoArchivo = require("./DaoArchivo.cjs");
     mensajesDao = new DaoArchivo(config.fileSystem.path);
     productosDao = new DaoArchivo(config.fileSystem.path);
-    break;
+    break;*/
 }
 
-module.exports = { mensajesDao, productosDao };
+module.exports = { productosDao };
