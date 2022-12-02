@@ -152,3 +152,36 @@
 [2022-11-30T11:35:05.988] [WARN] todos - metodo GET Ruta inexistente /carrito/js/function.js
 [2022-11-30T14:02:59.283] [INFO] todos - metodo GET Ruta  /
 [2022-11-30T14:03:55.484] [WARN] todos - metodo GET Ruta inexistente /63810b6e697d83db0cc5b050
+[2022-12-01T15:04:17.978] [WARN] todos - metodo GET Ruta inexistente /carrito/6388ec88840cc51158c79774
+[2022-12-02T09:28:37.524] [INFO] todos - metodo GET Ruta  /
+[2022-12-02T09:28:37.768] [WARN] todos - metodo GET Ruta inexistente /favicon.ico
+[2022-12-02T09:29:20.687] [ERROR] archivo2 - metodo GET Ruta  /failregister
+[2022-12-02T09:29:22.476] [INFO] todos - metodo GET Ruta  /
+[2022-12-02T09:31:09.730] [ERROR] archivo2 - metodo GET Ruta  /failregister
+[2022-12-02T09:31:11.195] [INFO] todos - metodo GET Ruta  /
+[2022-12-02T09:33:25.726] [ERROR] archivo2 - metodo GET Ruta  /failregister
+[2022-12-02T09:34:04.155] [INFO] todos - metodo GET Ruta  /
+[2022-12-02T09:36:14.937] [ERROR] archivo2 - metodo GET Ruta  /failregister
+[2022-12-02T09:37:05.644] [ERROR] archivo2 - metodo GET Ruta  /failregister
+[2022-12-02T09:37:07.165] [INFO] todos - metodo GET Ruta  /
+[2022-12-02T09:37:16.892] [WARN] todos - metodo GET Ruta inexistente /carrito/js/function.js
+[2022-12-02T09:42:27.789] [WARN] todos - metodo GET Ruta inexistente /carrito/js/function.js
+[2022-12-02T09:42:59.538] [WARN] todos - metodo GET Ruta inexistente /carrito/js/function.js
+[2022-12-02T09:43:02.689] [WARN] todos - metodo GET Ruta inexistente /carrito/js/function.js
+[2022-12-02T09:44:22.685] [WARN] todos - metodo GET Ruta inexistente /carrito/js/function.js
+[2022-12-02T09:44:24.837] [WARN] todos - metodo GET Ruta inexistente /carrito/js/function.js
+[2022-12-02T09:44:34.667] [WARN] todos - metodo GET Ruta inexistente /carrito/js/function.js
+[2022-12-02T09:44:35.384] [INFO] todos - metodo GET Ruta  /
+[2022-12-02T16:33:37.962] [INFO] todos - metodo GET Ruta  /
+[2022-12-02T16:34:40.880] [INFO] todos - metodo GET Ruta  /
+[2022-12-02T16:35:12.206] [WARN] todos - metodo GET Ruta inexistente /products-test
+[2022-12-02T16:36:25.833] [WARN] todos - metodo GET Ruta inexistente /carrito/js/function.js
+[2022-12-02T16:37:07.611] [WARN] todos - metodo GET Ruta inexistente /carrito/js/function.js
+[2022-12-02T16:38:00.363] [INFO] todos - metodo GET Ruta  /
+[2022-12-02T16:38:09.671] [WARN] todos - metodo GET Ruta inexistente /css/estilos.css
+[2022-12-02T16:38:11.921] [INFO] todos - metodo GET Ruta  /
+[2022-12-02T16:38:22.078] [INFO] todos - metodo GET Ruta  /
+[2022-12-02T16:48:49.270] [INFO] todos - metodo GET Ruta  /
+[2022-12-02T16:49:02.087] [ERROR] archivo2 - metodo GET Ruta  /failregister
+[2022-12-02T16:49:04.791] [INFO] todos - metodo GET Ruta  /
+[2022-12-02T16:50:27.281] [INFO] todos - metodo GET Ruta  /

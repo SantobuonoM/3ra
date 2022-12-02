@@ -1,4 +1,5 @@
 const config = require("../config.cjs");
+const daoCarritoMongo  = require("./daoCarritoMongo.cjs");
 let mongoSchema = {
   nombre: { type: String, required: true },
   apellido: { type: String, required: true },
@@ -13,6 +14,18 @@ let productoSchema = {
   price: { type: Number, required: false },
   thumbnail: { type: String, required: false },
 };
+let carritoSchema = {
+  products: {
+    type: [
+      {
+        product_id: { type: String, required: false },
+        price: { type: Number, required: false },
+        cantidad: { type: Number, required: false },
+      },
+    ],
+    required: false,
+  },
+};
 
 let mensajesDao;
 let productosDao;
@@ -24,7 +37,8 @@ switch (config.MODO_PERSISTENCIA) {
     break;
   default:
     const DaoMongoDb = require("./DaoMongoDb.cjs");
-    productosDao = new DaoMongoDb("carrito", productoSchema);
+    productosDao = new DaoMongoDb("productos", productoSchema);
+    carritoDao = new daoCarritoMongo("carrito", carritoSchema);
     break;
   /* default:
     const DaoArchivo = require("./DaoArchivo.cjs");
@@ -33,4 +47,4 @@ switch (config.MODO_PERSISTENCIA) {
     break;*/
 }
 
-module.exports = { productosDao };
+module.exports = { productosDao, carritoDao };

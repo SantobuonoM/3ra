@@ -9,8 +9,8 @@ import { dirname } from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-import  {carts_router} from "./routes/carrito.js";
-
+import { carts_router } from "./routes/carrito.js";
+import { main } from "./utils/nodemailer.js";
 import { User } from "./managers/user.js";
 import passport from "passport";
 import bCrypt from "bcrypt";
@@ -153,7 +153,7 @@ passport.use(
       passReqToCallback: true,
     },
     function (req, username, password, cb) {
-      console.log(req.body);
+      //console.log(req.body);
       const findOrCreateUser = function () {
         User.findOne({ username: username }, function (err, user) {
           if (err) {
@@ -180,6 +180,9 @@ passport.use(
                 throw err;
               }
               console.log("User Registration succesful");
+
+              main();
+
               return cb(null, newUser);
             });
           }
@@ -269,7 +272,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/datos", async (req, res) => {
-  console.log(req.user);
+  //console.log(req.user);
   if (req.user) {
     const datosUsuario = await User.findById(req.user._id).lean();
     res.render("datos", datosUsuario);

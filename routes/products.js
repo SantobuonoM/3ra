@@ -3,7 +3,7 @@ import express from "express";
 import ApiProductosMock from "../api/productosApi.js";
 import Contenedor from "../managers/contenedor.cjs";
 const ApiProductosMoc = new ApiProductosMock("./files/productos.txt");
-import  DaoMongoDb  from "../daos/DaoMongoDb.cjs";
+import { productosDao } from "../daos/indexDao.cjs";
 import { fork } from "child_process";
 
 //=========== ROUTER ===========//
@@ -22,15 +22,13 @@ let products = new Contenedor("./files/productos.txt");
 //new mensajesDao("./files/productos.txt");
 //=========== RUTAS ===========//
 
-
-
 router.get("/products", async (req, res, next) => {
   try {
-    const arrayProduct = await DaoMongoDb.getAll();
+    const arrayProduct = await productosDao.getAll();
     if (arrayProduct.length === 0) {
       throw new Error("No hay products");
     }
-    res.render("datos", { arrayProduct });
+    res.send(arrayProduct);
   } catch (err) {
     next(err);
   }
@@ -50,9 +48,8 @@ router.get("/products", async (req, res, next) => {
 
 router.get("/products/:id", async (req, res, next) => {
   try {
-    const producto = await productosDao
-      .get(Number(req.params._id))
-      .then((resolve) => resolve);
+    const producto = await productosDao.getById(req.params.id);
+    console.log(producto);
     if (!producto) {
       throw new Error("Producto no encontrado");
     }
@@ -103,45 +100,19 @@ router.post("/products", async (req, res, next) => {
       );
     }
     console.log(req.body);
-    await productosDao.save(req);
-    res.redirect("/carrito");
+    res.json(await productosDao.create(req.body));
   } catch (err) {
-      console.log(err);
-  }
-});
-
-router.put("/products/:id", async (req, res, next) => {
-  try {
-    const producto = await mensajesDao
-      .getById(Number(req.params.id))
-      .then((res) => res);
-    if (!producto) {
-      throw new Error("Producto no encontrado");
-    }
-    await mensajesDao
-      .update(
-        Number(req.params.id),
-        req.body.title,
-        req.body.price,
-        req.body.thumbnail
-      )
-      .then((resolve) => {
-        res.json(resolve);
-      });
-  } catch (err) {
-    next(err);
+    console.log(err);
   }
 });
 
 router.delete("/products/:id", async (req, res, next) => {
   try {
-    const producto = await mensajesDao
-      .getById(Number(req.params.id))
-      .then((resolve) => resolve);
+    const producto = await productosDao.getById(req.params.id);
     if (!producto) {
       throw new Error("Producto no encontrado");
     }
-    await products.deleteById(Number(req.params.id)).then((resolve) => {
+    await productosDao.deleteProduct(req.params.id).then( () => {
       res.json(`${producto.title} se borro con éxito`);
     });
   } catch (err) {

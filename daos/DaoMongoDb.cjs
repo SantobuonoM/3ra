@@ -1,7 +1,6 @@
+const ContenedorProductsMongoDb = require("../contenedores/contenedorProductsMongoDb.cjs");
 
-const ContenedorMongoDb = require("../contenedores/contenedorMongoDb.cjs");
-
-class DaoMongoDb extends ContenedorMongoDb {
+class DaoMongoDb extends ContenedorProductsMongoDb {
   constructor(collection, modelSchema) {
     super(collection, modelSchema);
   }

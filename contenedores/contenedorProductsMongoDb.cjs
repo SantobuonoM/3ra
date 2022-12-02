@@ -1,22 +1,22 @@
-import mongoose from "mongoose";
-import config from "../../config.js";
-import daoCarritoMongo from "../../daos/daoCarritoMongo.js";
-import { productosDao } from "../../daos/indexDao.cjs";
-
+const mongoose = require("mongoose");
+const config = require("../config.cjs");
+//const { productosDao } = require("../daos/indexDao.cjs");
+/** inicializar conexion a db */
+mongoose.Promise = global.Promise;
 mongoose.connect(config.mongodb.cnxStr, config.mongodb.options);
-
-export const Carts_controller_mongodb = class Carts_container {
+console.log("conectado a la DB -> Productos");
+class ContenedorProductsMongoDb {
   constructor(collection, schema) {
     this.collection = mongoose.model(collection, schema);
   }
 
   // Crea un carrito
-  create = async () => {
+  create = async (req) => {
     try {
-      let doc = await this.collection.save({ products: [] });
-      return doc._id;
+      let doc = await this.collection.create(req);
+      return doc;
     } catch (err) {
-      return { error: "Carrito no guardado" };
+      return { error: "Producto no guardado" };
     }
   };
 
@@ -24,7 +24,7 @@ export const Carts_controller_mongodb = class Carts_container {
   getAll = async () => {
     try {
       const carts = await this.collection.find({});
-      if (!carts) throw new Error("Carritos no encontrados");
+      if (!carts) throw new Error("Productos no encontrados");
       return carts;
     } catch (err) {
       return { error: err };
@@ -32,20 +32,20 @@ export const Carts_controller_mongodb = class Carts_container {
   };
 
   // Trae un carrito por id
-  getById = async (cart_id) => {
+  getById = async (product_id) => {
     try {
-      const cart = await this.collection.findById(cart_id);
-      if (!cart) throw new Error("Carrito no encontrado");
+      const cart = await this.collection.findById(product_id);
+      if (!cart) throw new Error("Producto no encontrado");
       return cart;
     } catch (err) {
       return { error: err };
     }
   };
 
-  getProducts = async (cart_id) => {
+  getProducts = async (product_id) => {
     try {
-      const cart = await this.collection.findById(cart_id);
-      if (!cart) throw new Error("Carrito no encontrado");
+      const cart = await this.collection.findById(product_id);
+      if (!cart) throw new Error("Producto no encontrado");
       return cart.products;
     } catch (err) {
       return { error: err };
@@ -54,10 +54,10 @@ export const Carts_controller_mongodb = class Carts_container {
 
   addProduct = async (cart_id, product_id) => {
     try {
-      const cart = await this.getById(cart_id);
+      const cart = await this.collection.getById(cart_id);
       console.log(cart.products);
 
-      if (!cart) throw new Error("Carrito no encontrado");
+      if (!cart) throw new Error("Producto no encontrado");
       const product = await productosDao.getById(product_id);
       if (!product) throw new Error("Producto no encontrado");
 
@@ -92,38 +92,26 @@ export const Carts_controller_mongodb = class Carts_container {
   };
 
   //Delete product from cart
-  deleteProduct = async (cart_id, product_id) => {
+  deleteProduct = async (product_id) => {
     try {
-      const cart = await this.getById(cart_id);
+      await this.collection.findByIdAndRemove({ _id: product_id });
+      return true;
+    } catch (error) {
+      return { error };
+    }
+  };
+
+  clearProducts = async (product_id) => {
+    try {
+      const cart = await this.getById(product_id);
       if (!cart) throw new Error("Carrito no encontrado");
 
-      const product_index = cart.products.findIndex(
-        (product) => product._id == product_id
-      );
-      if (product_index === -1) throw new Error("Producto no encontrado");
-
-      await this.collection.findByIdAndUpdate(
-        cart_id,
-        { $pull: { products: { id: product_id } } },
-        { safe: true, multi: true }
-      );
+      await this.collection.findByIdAndUpdate(product_id);
       return true;
     } catch (err) {
       return { error: err };
     }
   };
+}
 
-  clearProducts = async (cart_id) => {
-    try {
-      const cart = await this.getById(cart_id);
-      if (!cart) throw new Error("Carrito no encontrado");
-
-      await this.collection.findByIdAndUpdate(cart_id, {
-        $set: { products: [] },
-      });
-      return true;
-    } catch (err) {
-      return { error: err };
-    }
-  };
-};
+module.exports = ContenedorProductsMongoDb;
