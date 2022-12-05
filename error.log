@@ -185,3 +185,6 @@
 [2022-12-02T16:49:02.087] [ERROR] archivo2 - metodo GET Ruta  /failregister
 [2022-12-02T16:49:04.791] [INFO] todos - metodo GET Ruta  /
 [2022-12-02T16:50:27.281] [INFO] todos - metodo GET Ruta  /
+[2022-12-05T19:55:10.437] [INFO] todos - metodo GET Ruta  /
+[2022-12-05T19:55:10.674] [WARN] todos - metodo GET Ruta inexistente /favicon.ico
+[2022-12-05T19:55:35.168] [INFO] todos - metodo GET Ruta  /

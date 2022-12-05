@@ -1,12 +1,13 @@
 import { response, Router } from "express";
 import { productosDao, carritoDao } from "../daos/indexDao.cjs";
+import { mensajeProducto } from "../utils/whatsapp.js";
 
 export const carts_router = new Router();
 
 carts_router.post("/", async (req, res) => {
   try {
     res.json(await carritoDao.create());
-    res.redirect("/")
+    res.redirect("/");
     console.log("¡Carrito creado!");
   } catch (error) {
     console.log(error);
@@ -19,6 +20,7 @@ carts_router.post("/:cart_id/products", async (req, res) => {
       req.params.cart_id,
       req.body.productos
     );
+    mensajeProducto();
     res.json(response);
   } catch (error) {
     res.send(error);

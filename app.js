@@ -20,6 +20,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import MongoStore from "connect-mongo";
+import {mensajeProducto, mensajeRegistro} from "./utils/whatsapp.js"
 
 import fs from "fs";
 import exphbs from "express-handlebars";
@@ -140,6 +141,7 @@ passport.use(
           console.log("Invalid Password");
           return cb(null, false);
         }
+        
         return cb(null, user);
       });
     }
@@ -182,7 +184,7 @@ passport.use(
               console.log("User Registration succesful");
 
               main();
-
+              mensajeRegistro()
               return cb(null, newUser);
             });
           }

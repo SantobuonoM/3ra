@@ -1,4 +1,4 @@
-const dotenv =require ("dotenv");
+const dotenv = require("dotenv");
 dotenv.config();
 
 module.exports = {
@@ -33,4 +33,9 @@ module.exports = {
   },
   isAdmin: true,
   MODO_PERSISTENCIA: process.env.MODO_PERSISTENCIA,
+  twilio: {
+    accountSid: "ACe7995b8c557b78d4c630a76e67536027",
+    authToken: "4e8d22e4cec025ccc5c2eacccc4c9fa2",
+    administratorPhone: "1130881719",
+  },
 };
