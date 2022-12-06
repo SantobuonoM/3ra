@@ -188,3 +188,19 @@
 [2022-12-05T19:55:10.437] [INFO] todos - metodo GET Ruta  /
 [2022-12-05T19:55:10.674] [WARN] todos - metodo GET Ruta inexistente /favicon.ico
 [2022-12-05T19:55:35.168] [INFO] todos - metodo GET Ruta  /
+[2022-12-06T10:40:47.377] [INFO] todos - metodo GET Ruta  /
+[2022-12-06T10:40:47.578] [WARN] todos - metodo GET Ruta inexistente /favicon.ico
+[2022-12-06T10:41:15.181] [INFO] todos - metodo GET Ruta  /
+[2022-12-06T10:48:49.970] [WARN] todos - metodo GET Ruta inexistente /css/estilos.css
+[2022-12-06T10:48:52.186] [INFO] todos - metodo GET Ruta  /
+[2022-12-06T10:49:51.761] [INFO] todos - metodo GET Ruta  /
+[2022-12-06T12:43:55.412] [INFO] todos - metodo GET Ruta  /
+[2022-12-06T12:44:25.039] [ERROR] archivo2 - metodo GET Ruta  /failregister
+[2022-12-06T12:44:26.983] [INFO] todos - metodo GET Ruta  /
+[2022-12-06T12:49:53.320] [INFO] todos - metodo GET Ruta  /
+[2022-12-06T12:51:04.424] [INFO] todos - metodo GET Ruta  /
+[2022-12-06T12:51:07.595] [WARN] todos - metodo GET Ruta inexistente /css/estilos.css
+[2022-12-06T12:51:09.800] [INFO] todos - metodo GET Ruta  /
+[2022-12-06T12:51:48.414] [ERROR] archivo2 - metodo GET Ruta  /failregister
+[2022-12-06T12:51:50.052] [INFO] todos - metodo GET Ruta  /
+[2022-12-06T12:52:06.996] [INFO] todos - metodo GET Ruta  /

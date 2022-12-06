@@ -1,7 +1,7 @@
 import { response, Router } from "express";
 import { productosDao, carritoDao } from "../daos/indexDao.cjs";
 import { mensajeProducto } from "../utils/whatsapp.js";
-
+import { mailProducto } from "../utils/nodemailer.js";
 export const carts_router = new Router();
 
 carts_router.post("/", async (req, res) => {
@@ -20,7 +20,8 @@ carts_router.post("/:cart_id/products", async (req, res) => {
       req.params.cart_id,
       req.body.productos
     );
-    mensajeProducto();
+    let prod = req.body.productos;
+    mailProducto(prod);
     res.json(response);
   } catch (error) {
     res.send(error);

@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 import { carts_router } from "./routes/carrito.js";
-import { main } from "./utils/nodemailer.js";
+import { mailRegistros } from "./utils/nodemailer.js";
 import { User } from "./managers/user.js";
 import passport from "passport";
 import bCrypt from "bcrypt";
@@ -20,7 +20,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import MongoStore from "connect-mongo";
-import {mensajeProducto, mensajeRegistro} from "./utils/whatsapp.js"
+import { mensajeProducto, mensajeRegistro } from "./utils/whatsapp.js";
 
 import fs from "fs";
 import exphbs from "express-handlebars";
@@ -141,7 +141,7 @@ passport.use(
           console.log("Invalid Password");
           return cb(null, false);
         }
-        
+
         return cb(null, user);
       });
     }
@@ -182,9 +182,9 @@ passport.use(
                 throw err;
               }
               console.log("User Registration succesful");
-
-              main();
-              mensajeRegistro()
+              let user = newUser.username;
+              mailRegistros(user);
+              mensajeRegistro();
               return cb(null, newUser);
             });
           }
